@@ -1,0 +1,12 @@
+# Ambiente virtual
+.venv/
+venv/
+__pycache__/
+
+# Relatórios e ficheiros gerados pelo Robot Framework
+results/
+*.log
+*.html
+*.xml
+*.png
+!docs/images/report.png

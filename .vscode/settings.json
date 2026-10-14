@@ -1,0 +1,6 @@
+{
+    "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
+    "robot.language-server.python": "${workspaceFolder}/.venv/bin/python",
+    "robot.python.executable": "${workspaceFolder}/.venv/bin/python",
+    "robotcode.robot.python": "${workspaceFolder}/.venv/bin/python"
+}

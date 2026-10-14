@@ -1,0 +1,7 @@
+certifi==2026.7.22
+charset-normalizer==3.5.2
+idna==3.20
+requests==2.34.2
+robotframework==7.5
+robotframework-requests==0.9.7
+urllib3==2.8.0
