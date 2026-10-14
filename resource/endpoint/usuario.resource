@@ -27,3 +27,24 @@ Validar cadastro com sucesso
 Validar erro de e-mail duplicado
     [Arguments]    ${resposta}
     Should Be Equal As Strings    ${resposta.json()}[message]    Este email já está sendo usado
+
+# --- Get /usuario ----
+Listar todos os usuários cadastrados
+    ${resposta}=    GET On Session    alias=serverest    url=/usuarios        expected_status=any
+    RETURN    ${resposta}
+
+Buscar usuário por ID 
+    [Arguments]    ${id_usuario}
+    ${resposta}=    GET On Session    alias=serverest    url=/usuarios/${id_usuario}        expected_status=any
+    RETURN    ${resposta}
+
+Validar listagem de usuarios
+    [Arguments]    ${resposta}
+    Should Be Equal As Integers    ${resposta.status_code}    200
+    Dictionary Should Contain Key    ${resposta.json()}    usuarios
+
+Validar busca de usuário por _ID
+    [Arguments]    ${resposta_busca}    ${payload_enviado}
+    Should Be Equal As Integers    ${resposta_busca.status_code}    200
+    Should Be Equal As Strings    ${resposta_busca.json()}[nome]    ${payload_enviado}[nome]
+    Should Be Equal As Strings    ${resposta_busca.json()}[email]    ${payload_enviado}[email]
