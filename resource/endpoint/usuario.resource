@@ -48,3 +48,40 @@ Validar busca de usuário por _ID
     Should Be Equal As Integers    ${resposta_busca.status_code}    200
     Should Be Equal As Strings    ${resposta_busca.json()}[nome]    ${payload_enviado}[nome]
     Should Be Equal As Strings    ${resposta_busca.json()}[email]    ${payload_enviado}[email]
+
+Validar erro de busca de usuário por _ID inexistente
+    [Arguments]    ${resposta_busca}
+    Should Be Equal As Integers    ${resposta_busca.status_code}    400
+    Should Be Equal As Strings    ${resposta_busca.json()}[message]    Usuário não encontrado
+
+# --- Put /usuarios ----
+Editar usuário na API
+    [Arguments]    ${id_usuario}    ${payload_atualizado}
+    ${resposta}=    PUT On Session    alias=serverest    url=/usuarios/${id_usuario}    json=${payload_atualizado}      expected_status=any
+    RETURN    ${resposta}
+
+Validar edição com sucesso
+    [Arguments]    ${resposta}
+    Should Be Equal As Integers    ${resposta.status_code}    200
+    Should Be Equal As Strings    ${resposta.json()}[message]    Registro alterado com sucesso
+
+Validar edição duplicada
+    [Arguments]    ${resposta}
+    Should Be Equal As Integers    ${resposta.status_code}    400
+    Should Be Equal As Strings    ${resposta.json()}[message]    Este email já está sendo usado
+
+# --- Delete /usuarios
+Deletar usuário na API
+    [Arguments]    ${id_usuario}
+    ${resposta}=    DELETE On Session    alias=serverest    url=/usuarios/${id_usuario}    expected_status=any
+    RETURN    ${resposta}
+
+Validar exclusão com sucesso
+    [Arguments]    ${resposta}
+    Should Be Equal As Integers    ${resposta.status_code}    200
+    Should Be Equal As Strings    ${resposta.json()}[message]    Registro excluído com sucesso
+
+Validar nenhum registro excluído
+    [Arguments]    ${resposta}
+    Should Be Equal As Integers    ${resposta.status_code}    200
+    Should Be Equal As Strings    ${resposta.json()}[message]    Nenhum registro excluído
