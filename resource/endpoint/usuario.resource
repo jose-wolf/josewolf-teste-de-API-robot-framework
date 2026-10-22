@@ -1,9 +1,14 @@
 *** Settings ***
+Documentation    Keywords de ação e validação do endpoint /usuarios
+Resource         ../base.resource
 
-Resource    ../base.resource
+
+*** Variables ***
+${USUARIO_PADRAO}    ${None}
+
 
 *** Keywords ***
-# --- Método Post / usuário ***
+# --- Massa de Dados ---
 Criar dados de usuário válido
     ${aleatorio}=    Generate Random String    length=6    chars=[LOWER]
     ${payload}=      Create Dictionary
@@ -13,75 +18,44 @@ Criar dados de usuário válido
     ...              administrador=true
     RETURN           ${payload}
 
+# --- Ações (POST, GET, PUT, DELETE) ---
 Cadastrar usuário na API
     [Arguments]    ${payload}
     ${resposta}=    POST On Session    alias=serverest    url=/usuarios    json=${payload}    expected_status=any
-    RETURN    ${resposta}
+    RETURN          ${resposta}
 
-Validar cadastro com sucesso
-    [Arguments]    ${resposta}
-    Should Be Equal As Integers    ${resposta.status_code}    201
-    Should Be Equal As Strings     ${resposta.json()}[message]    Cadastro realizado com sucesso
-    Should Not Be Empty    ${resposta.json()}[_id]
-
-Validar erro de e-mail duplicado
-    [Arguments]    ${resposta}
-    Should Be Equal As Strings    ${resposta.json()}[message]    Este email já está sendo usado
-
-# --- Get /usuario ----
 Listar todos os usuários cadastrados
-    ${resposta}=    GET On Session    alias=serverest    url=/usuarios        expected_status=any
-    RETURN    ${resposta}
+    ${resposta}=    GET On Session     alias=serverest    url=/usuarios    expected_status=any
+    RETURN          ${resposta}
 
-Buscar usuário por ID 
+Buscar usuário por ID
     [Arguments]    ${id_usuario}
-    ${resposta}=    GET On Session    alias=serverest    url=/usuarios/${id_usuario}        expected_status=any
-    RETURN    ${resposta}
+    ${resposta}=    GET On Session     alias=serverest    url=/usuarios/${id_usuario}    expected_status=any
+    RETURN          ${resposta}
 
-Validar listagem de usuarios
-    [Arguments]    ${resposta}
-    Should Be Equal As Integers    ${resposta.status_code}    200
-    Dictionary Should Contain Key    ${resposta.json()}    usuarios
-
-Validar busca de usuário por _ID
-    [Arguments]    ${resposta_busca}    ${payload_enviado}
-    Should Be Equal As Integers    ${resposta_busca.status_code}    200
-    Should Be Equal As Strings    ${resposta_busca.json()}[nome]    ${payload_enviado}[nome]
-    Should Be Equal As Strings    ${resposta_busca.json()}[email]    ${payload_enviado}[email]
-
-Validar erro de busca de usuário por _ID inexistente
-    [Arguments]    ${resposta_busca}
-    Should Be Equal As Integers    ${resposta_busca.status_code}    400
-    Should Be Equal As Strings    ${resposta_busca.json()}[message]    Usuário não encontrado
-
-# --- Put /usuarios ----
 Editar usuário na API
     [Arguments]    ${id_usuario}    ${payload_atualizado}
-    ${resposta}=    PUT On Session    alias=serverest    url=/usuarios/${id_usuario}    json=${payload_atualizado}      expected_status=any
-    RETURN    ${resposta}
+    ${resposta}=    PUT On Session     alias=serverest    url=/usuarios/${id_usuario}    json=${payload_atualizado}    expected_status=any
+    RETURN          ${resposta}
 
-Validar edição com sucesso
-    [Arguments]    ${resposta}
-    Should Be Equal As Integers    ${resposta.status_code}    200
-    Should Be Equal As Strings    ${resposta.json()}[message]    Registro alterado com sucesso
-
-Validar edição duplicada
-    [Arguments]    ${resposta}
-    Should Be Equal As Integers    ${resposta.status_code}    400
-    Should Be Equal As Strings    ${resposta.json()}[message]    Este email já está sendo usado
-
-# --- Delete /usuarios
 Deletar usuário na API
     [Arguments]    ${id_usuario}
     ${resposta}=    DELETE On Session    alias=serverest    url=/usuarios/${id_usuario}    expected_status=any
-    RETURN    ${resposta}
+    RETURN          ${resposta}
 
-Validar exclusão com sucesso
+# --- Validações Específicas de /usuarios ---
+Validar cadastro com sucesso
     [Arguments]    ${resposta}
-    Should Be Equal As Integers    ${resposta.status_code}    200
-    Should Be Equal As Strings    ${resposta.json()}[message]    Registro excluído com sucesso
+    Validar retorno da API    ${resposta}    201    Cadastro realizado com sucesso
+    Should Not Be Empty       ${resposta.json()}[_id]
 
-Validar nenhum registro excluído
+Validar listagem de usuários
     [Arguments]    ${resposta}
-    Should Be Equal As Integers    ${resposta.status_code}    200
-    Should Be Equal As Strings    ${resposta.json()}[message]    Nenhum registro excluído
+    Status Should Be                 200    ${resposta}
+    Dictionary Should Contain Key    ${resposta.json()}    usuarios
+
+Validar busca de usuário por ID
+    [Arguments]    ${resposta_busca}    ${payload_enviado}
+    Status Should Be              200    ${resposta_busca}
+    Should Be Equal As Strings    ${resposta_busca.json()}[nome]     ${payload_enviado}[nome]
+    Should Be Equal As Strings    ${resposta_busca.json()}[email]    ${payload_enviado}[email]
