@@ -10,12 +10,13 @@ ${USUARIO_PADRAO}    ${None}
 *** Keywords ***
 # --- Massa de Dados ---
 Criar dados de usuário válido
+    [Arguments]    ${administrador}=true
     ${aleatorio}=    Generate Random String    length=6    chars=[LOWER]
     ${payload}=      Create Dictionary
     ...              nome=Fulano QA
     ...              email=fulano_${aleatorio}@qa.com.br
     ...              password=teste123
-    ...              administrador=true
+    ...              administrador=${administrador}
     RETURN           ${payload}
 
 # --- Ações (POST, GET, PUT, DELETE) ---

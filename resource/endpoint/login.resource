@@ -3,6 +3,9 @@ Documentation    Keywords de ação e validação da rota /login
 Resource         ../base.resource
 Resource         ../endpoint/usuario.resource
 
+*** Variables ***
+${USUARIO_PADRAO}    ${NONE}
+
 *** Keywords ***
 Preparar suíte de login
     Conectar na API ServeRest
@@ -10,9 +13,18 @@ Preparar suíte de login
     Set Suite Variable    ${USUARIO_PADRAO}    ${usuario}
 
 Criar usuário cadastrado para login
-    ${usuario}=    Criar dados de usuário válido
+    [Arguments]    ${administrador}=true
+    ${usuario}=    Criar dados de usuário válido    administrador=${administrador}
     Cadastrar usuário na API    ${usuario}
     RETURN         ${usuario}
+
+Obter token de acesso
+    [Documentation]    Cria um usuário, realiza o login e retorna o token Bearer.
+    [Arguments]    ${administrador}=true
+    ${usuario}=    Criar usuário cadastrado para login    ${administrador}
+    ${payload_login}=    Extrair credenciais para login    ${usuario}
+    ${resposta}=    Realizar login na API    ${payload_login}
+    RETURN    ${resposta.json()}[authorization] 
 
 Extrair credenciais para login
     [Arguments]    ${usuario}=${USUARIO_PADRAO}
