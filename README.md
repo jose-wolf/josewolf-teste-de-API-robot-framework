@@ -185,7 +185,7 @@ Resultado da última execução:
 - **37 testes aprovados**
 - **0 testes reprovados**
 
-![Relatório de execução dos testes](docs/images/report.png)
+![Relatório de execução dos testes](docs/image/report-teste-api-serverest.png)
 
 ## Próximos passos
 
