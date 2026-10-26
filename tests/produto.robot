@@ -30,7 +30,7 @@ Cenário 03: Não deve permitir cadastrar produto sem token de autenticação
     Validar retorno da API    ${resposta_erro}    401    Token de acesso ausente, inválido, expirado ou usuário do token não existe mais
 
 Cenário 04: Não deve permitir cadastrar produto com usuário que não é administrador
-    [Documentation]    Deve retornar 403 quando o token pertencer a um usuário co m administrador=false
+    [Documentation]    Deve retornar 403 quando o token pertencer a um usuário com administrador=false
     ...                - Cenário negativo
     [Tags]             negativo    post    auth
     ${token_comum}=      Obter token de acesso       administrador=false

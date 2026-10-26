@@ -2,11 +2,6 @@
 Documentation    Keywords de ação e validação do endpoint /usuarios
 Resource         ../base.resource
 
-
-*** Variables ***
-${USUARIO_PADRAO}    ${None}
-
-
 *** Keywords ***
 # --- Massa de Dados ---
 Criar dados de usuário válido
