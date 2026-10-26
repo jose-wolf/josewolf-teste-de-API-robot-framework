@@ -190,7 +190,6 @@ Resultado da última execução:
 ## Próximos passos
 
 - Integrar a execução dos testes em pipeline de CI/CD com GitHub Actions.
-- Adicionar validação automatizada de contrato (JSON Schema).
 
 ## Autor
 
