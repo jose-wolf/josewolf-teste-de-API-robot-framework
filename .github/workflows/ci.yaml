@@ -13,10 +13,10 @@ jobs:
   
   steps:
    - name: 1. Baixar o código do repositório
-     uses: actions/checkout@v4
+     uses: actions/checkout@v7
 
    - name: 2. Configurar o Python 3.14
-     uses: actions/setup-python@v5
+     uses: actions/setup-python@v7
      with:
       python-version: '3.14'
       cache: 'pip'
@@ -31,7 +31,7 @@ jobs:
    
    - name: 5. Publicar o relatório de testes (Artifact)
      if: always()
-     uses: actions/upload-artifact@v4
+     uses: actions/upload-artifact@v7
      with:
       name: relatorio-testes-api
       path: results/
