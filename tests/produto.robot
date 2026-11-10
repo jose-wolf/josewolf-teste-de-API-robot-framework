@@ -91,3 +91,47 @@ Cenário 10: Não deve deletar produto com _id inexistente
     ${id_inexistente}=       Set Variable    123456789outroid
     ${resposta_exclusao}=    Deletar produto na API    ${id_inexistente}
     Validar retorno da API   ${resposta_exclusao}    200    Nenhum registro excluído
+
+Cenário 11: Não deve permitir editar produto sem token de autenticação
+    [Documentation]    Deve retornar 401 ao tentar editar um produto via PUT com o header Authorization vazio
+    ...                - Cenário negativo
+    [Tags]             negativo    put    auth
+    ${payload}=              Criar dados de produto válido
+    ${resposta_cadastro}=    Cadastrar produto na API    ${payload}
+    ${id_gerado}=            Set Variable    ${resposta_cadastro.json()}[_id]
+    Set To Dictionary        ${payload}      preco=${299}
+    ${resposta_erro}=        Editar produto por ID       ${id_gerado}    ${payload}    token=${EMPTY}
+    Validar retorno da API   ${resposta_erro}    401    Token de acesso ausente, inválido, expirado ou usuário do token não existe mais
+
+Cenário 12: Não deve permitir editar produto com usuário que não é administrador
+    [Documentation]    Deve retornar 403 ao tentar editar um produto via PUT usando token de usuário comum (administrador=false)
+    ...                - Cenário negativo
+    [Tags]             negativo    put    auth
+    ${token_comum}=          Obter token de acesso       administrador=false
+    ${payload}=              Criar dados de produto válido
+    ${resposta_cadastro}=    Cadastrar produto na API    ${payload}
+    ${id_gerado}=            Set Variable    ${resposta_cadastro.json()}[_id]
+    Set To Dictionary        ${payload}      preco=${299}
+    ${resposta_erro}=        Editar produto por ID       ${id_gerado}    ${payload}    token=${token_comum}
+    Validar retorno da API   ${resposta_erro}    403    Rota exclusiva para administradores
+
+Cenário 13: Não deve permitir deletar produto sem token de autenticação
+    [Documentation]    Deve retornar 401 ao tentar deletar um produto via DELETE com o header Authorization vazio
+    ...                - Cenário negativo
+    [Tags]             negativo    delete    auth
+    ${payload}=              Criar dados de produto válido
+    ${resposta_cadastro}=    Cadastrar produto na API    ${payload}
+    ${id_gerado}=            Set Variable    ${resposta_cadastro.json()}[_id]
+    ${resposta_erro}=        Deletar produto na API      ${id_gerado}    token=${EMPTY}
+    Validar retorno da API   ${resposta_erro}    401    Token de acesso ausente, inválido, expirado ou usuário do token não existe mais
+
+Cenário 14: Não deve permitir deletar produto com usuário que não é administrador
+    [Documentation]    Deve retornar 403 ao tentar deletar um produto via DELETE usando token de usuário comum (administrador=false)
+    ...                - Cenário negativo
+    [Tags]             negativo    delete    auth
+    ${token_comum}=          Obter token de acesso       administrador=false
+    ${payload}=              Criar dados de produto válido
+    ${resposta_cadastro}=    Cadastrar produto na API    ${payload}
+    ${id_gerado}=            Set Variable    ${resposta_cadastro.json()}[_id]
+    ${resposta_erro}=        Deletar produto na API      ${id_gerado}    token=${token_comum}
+    Validar retorno da API   ${resposta_erro}    403    Rota exclusiva para administradores

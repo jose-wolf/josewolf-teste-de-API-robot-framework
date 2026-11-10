@@ -1,21 +1,27 @@
 # Testes automatizados da API ServeRest com Robot Framework
 
+![CI Status](https://github.com/jose-wolf/josewolf-teste-de-API-robot-framework/actions/workflows/ci.yaml/badge.svg)
+
 Este projeto contém testes automatizados de API REST da aplicação [ServeRest](https://serverest.dev/), desenvolvidos com Robot Framework e RequestsLibrary, com o objetivo de validar seus principais fluxos funcionais, regras de negócio, autenticação e permissões de acesso.
 
 ## Tecnologias e Ferramentas utilizadas
 
-- **Linguagem:** Python 3.12
+- **Linguagem:** Python 3.14
 - **Framework de Automação:** Robot Framework v7.5
 - **Biblioteca de Requisições HTTP:** RequestsLibrary (`robotframework-requests`)
 - **Bibliotecas Nativas:** Collections e String
+- **Integração Contínua (CI):** GitHub Actions
 
 ## Estrutura do projeto
 
 ```text
 josewolf-teste-de-API-robot-framework/
+├── .github/
+│   └── workflows/
+│       └── ci.yaml
 ├── docs/
-│   └── images/
-│       └── report.png
+│   └── image/
+│       └── report-teste-api-serverest.png
 ├── resource/
 │   ├── base.resource
 │   └── endpoint/
@@ -33,6 +39,7 @@ josewolf-teste-de-API-robot-framework/
 └── README.md
 ```
 
+- **.github/workflows/ci.yaml:** configura o pipeline de Integração Contínua (CI) no GitHub Actions para execução automática dos testes e publicação dos relatórios.
 - **resource/base.resource:** centraliza as bibliotecas, a conexão global com a sessão da API (`Create Session`) e as validações genéricas reutilizáveis.
 - **resource/endpoint/:** contém a geração de massa de dados dinâmica, as keywords de chamadas HTTP (`GET`, `POST`, `PUT`, `DELETE`) e as validações específicas de cada rota da API.
 - **tests/:** contém as suítes e os cenários de teste automatizados organizados por endpoint.
@@ -40,9 +47,9 @@ josewolf-teste-de-API-robot-framework/
 
 ## Pré-requisitos
 
-Antes de executar o projeto, é necessário ter instalado:
+Antes de executar o projeto localmente, é necessário ter instalado:
 
-- Python 3.12
+- Python 3.12+
 - Git
 - pip
 
@@ -104,6 +111,16 @@ Para executar filtrando por tags (ex: `smoke`, `positivo` ou `negativo`):
 robot -d results -i smoke tests/
 ```
 
+## Integração Contínua (CI)
+
+O projeto possui um pipeline de **Integração Contínua (CI)** configurado com **GitHub Actions** (`.github/workflows/ci.yaml`).
+
+A cada `push` ou `pull_request` na branch `main` (ou manualmente via `workflow_dispatch`), o workflow:
+1. Provisiona um ambiente Ubuntu Linux na nuvem;
+2. Configura o Python e instala as dependências do `requirements.txt`;
+3. Executa todas as suítes de testes automatizados;
+4. Publica os relatórios (`report.html`, `log.html` e `output.xml`) como artefatos (`relatorio-testes-api`) disponíveis para download na aba **Actions** do GitHub.
+
 ## Cenários cobertos
 
 ### Usuários (`/usuarios`)
@@ -147,6 +164,10 @@ robot -d results -i smoke tests/
 | PROD-008 | Editar os dados de um produto com sucesso | `PUT` | Positivo | Status `200` informando que o registro foi alterado com sucesso |
 | PROD-009 | Deletar um produto com sucesso | `DELETE` | Positivo | Status `200` informando que o registro foi excluído com sucesso |
 | PROD-010 | Não deletar produto com `_id` inexistente | `DELETE` | Negativo | Status `200` informando que nenhum registro foi excluído |
+| PROD-011 | Não permitir editar produto sem token de autenticação | `PUT` | Negativo | Status `401` informando token de acesso ausente ou inválido |
+| PROD-012 | Não permitir editar produto com usuário não-administrador | `PUT` | Negativo | Status `403` informando rota exclusiva para administradores |
+| PROD-013 | Não permitir deletar produto sem token de autenticação | `DELETE` | Negativo | Status `401` informando token de acesso ausente ou inválido |
+| PROD-014 | Não permitir deletar produto com usuário não-administrador | `DELETE` | Negativo | Status `403` informando rota exclusiva para administradores |
 
 ### Carrinhos (`/carrinhos`)
 
@@ -177,19 +198,20 @@ Para visualizar os resultados, abra `report.html` ou `log.html` em um navegador.
 
 ## Evidência de execução
 
-A suíte completa possui atualmente **37 testes automatizados**.
+A suíte completa possui atualmente **41 testes automatizados**.
 
 Resultado da última execução:
 
-- **37 testes executados**
-- **37 testes aprovados**
+- **41 testes executados**
+- **41 testes aprovados**
 - **0 testes reprovados**
 
 ![Relatório de execução dos testes](docs/image/report-teste-api-serverest.png)
 
 ## Próximos passos
 
-- Integrar a execução dos testes em pipeline de CI/CD com GitHub Actions.
+- Adicionar validação automatizada de contrato (JSON Schema).
+- Evoluir os cenários de teste conforme novas rotas ou regras de negócio surgirem.
 
 ## Autor
 
